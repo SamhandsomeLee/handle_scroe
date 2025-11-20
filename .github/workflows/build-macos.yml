@@ -43,17 +43,11 @@ jobs:
       
       - name: Create DMG
         run: |
-          brew install create-dmg
-          create-dmg \
-            --volname "成绩导入转换工具" \
-            --window-pos 200 120 \
-            --window-size 600 400 \
-            --icon-size 100 \
-            --icon "成绩导入转换工具.app" 150 190 \
-            --hide-extension "成绩导入转换工具.app" \
-            --app-drop-link 450 190 \
-            "dist/成绩导入转换工具.dmg" \
-            "dist/成绩导入转换工具.app"
+          # 直接复制 .app 到 DMG（不用 create-dmg）
+          mkdir -p dmg_temp
+          cp -r "dist/成绩导入转换工具.app" dmg_temp/
+          hdiutil create -volname "成绩导入转换工具" -srcfolder dmg_temp -ov -format UDZO "dist/成绩导入转换工具.dmg"
+          rm -rf dmg_temp
       
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
