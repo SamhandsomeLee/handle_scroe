@@ -1,0 +1,31 @@
+# 使用 macOS 构建环境
+FROM ghcr.io/sickcodes/docker-osx:latest
+
+# 安装 Python 和必要工具
+RUN brew install python3 git
+
+# 设置工作目录
+WORKDIR /workspace
+
+# 复制项目文件
+COPY . /workspace/
+
+# 安装依赖
+RUN pip3 install --upgrade pip setuptools wheel
+RUN pip3 install -r requirements.txt
+RUN pip3 install PyInstaller
+
+# 打包
+RUN pyinstaller \
+    score_import_gui.py \
+    --name="成绩导入转换工具" \
+    --onefile \
+    --windowed \
+    --add-data "excel_handler.py:." \
+    --collect-all=PySide6 \
+    --hidden-import=xlrd \
+    --hidden-import=xlwt \
+    --hidden-import=openpyxl
+
+# 输出
+CMD cp -r dist /output/
